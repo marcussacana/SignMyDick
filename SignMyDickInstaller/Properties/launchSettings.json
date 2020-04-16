@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SignMyDickInstaller": {
+      "commandName": "Project"
+    },
+    "Microsoft Edge": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+      "workingDirectory": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application"
+    }
+  }
+}
