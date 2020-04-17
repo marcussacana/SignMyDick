@@ -1,5 +1,5 @@
 # Real Sigin Crack
-My successful attempt to break the signature hang, unlike the main program that just hides the alert, so you can load any unsigned CRX3 as long as it has an "update_url" in the manifest.
+My successful attempt to crack the signature hang, unlike the main program that just hides the alert, so you can load any unsigned CRX3 as long as it has an "update_url" in the manifest.
 
 ### Why not included as feature in the main program?
 There are some points that i need to take attention before include this as feature,
