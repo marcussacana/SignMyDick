@@ -27,7 +27,7 @@ namespace SignMyDickInstaller
             Settings = new Ini(IniPath, "Installer");
             if (!File.Exists(SignMyDickDll)) {
                 Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
+                Application.SetCompatibleTextRenderingDefault(true);
                 Application.Run(new MainWindow());
                 return;
             }

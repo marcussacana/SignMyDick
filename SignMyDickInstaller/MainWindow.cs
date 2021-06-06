@@ -224,12 +224,21 @@ namespace SignMyDickInstaller
         public static void CloseBrowser(string ExePath) {
             bool Killed = false;
             var CurrentProcId = Process.GetCurrentProcess().Id;
+            
             foreach (var Proc in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(ExePath))) {
                 if (Proc.Id == CurrentProcId)
                     continue;               
                 Proc.Kill();
                 Killed = true;
             }
+
+            foreach (var Proc in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(ExePath) + "_ori")) {
+                if (Proc.Id == CurrentProcId)
+                    continue;               
+                Proc.Kill();
+                Killed = true;
+            }
+
             if (Killed)
                 Thread.Sleep(5000);
         }

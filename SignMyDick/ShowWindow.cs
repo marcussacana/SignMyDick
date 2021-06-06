@@ -17,16 +17,27 @@ namespace SignMyDick
             Compile();
         }
 
-        public event ShowWindowEvent BeforeShowWindow;
+        bool UnderEvent = false;
+
+        public event ShowWindowEvent BeforeShowWindow; 
+        public event ShowWindowEvent AfterShowWindow;
         bool hShowWindow(void* hWnd, CMDShow nCmdShow)
         {
+            if (UnderEvent)
+                return Bypass(hWnd, nCmdShow);
+            
             var Args = new ShowWindowEventArgs(hWnd, Win32.GetClassNameFromHandle(hWnd), Win32.GetWindowText(hWnd), nCmdShow);
             BeforeShowWindow?.Invoke(this, Args);
             nCmdShow = Args.nCmdShow;
-            if (!Args.Continue) {
+            if (!Args.Continue)
+            {
+                UnderEvent = false;
                 return true;
             }
-            return Bypass(hWnd, nCmdShow);
+            UnderEvent = false;
+            var Rst = Bypass(hWnd, nCmdShow);
+            AfterShowWindow?.Invoke(this, Args);
+            return Rst;
         }
     }
 

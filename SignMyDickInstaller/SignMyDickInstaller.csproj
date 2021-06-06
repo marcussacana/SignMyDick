@@ -11,6 +11,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <OutputType>WinExe</OutputType>
     <ApplicationIcon>Signed.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <Optimize>false</Optimize>

@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static SignMyDick.Win32;
 using System.Windows.Forms;
+using System.Threading;
+using System.Drawing;
+using System.Diagnostics;
 
 namespace SignMyDick
 {
@@ -41,8 +45,10 @@ namespace SignMyDick
                 Hook.BeforeShowWindow += Setup;
             }
             else
+            {
                 Hook.BeforeShowWindow += BeforeShowWindow;
-
+                Hook.AfterShowWindow += AfterShowWindow;
+            }
             Hook.Install();
         }
 
@@ -52,6 +58,26 @@ namespace SignMyDick
                 Args.nCmdShow = CMDShow.SW_HIDE;
                 if (!Persistent)
                     Hook.Uninstall();
+            }
+        }
+
+        public unsafe static void AfterShowWindow(object Sender, ShowWindowEventArgs Args)
+        {
+            if (Args.Title == Title && Args.Class == Class)
+            {
+                new Thread(() =>
+                {
+                    const uint WM_IME_KEYDOWN = 0x290;
+                    const int VK_TAB = 0x09;
+                    const int VK_RETURN = 0x0D;
+
+                    while (IsWindow(Args.hWnd))
+                    {
+                        SendMessage(Args.hWnd, WM_IME_KEYDOWN, VK_TAB, 0);
+                        SendMessage(Args.hWnd, WM_IME_KEYDOWN, VK_RETURN, 0);
+                        Thread.Sleep(100);
+                    }
+                }).Start();
             }
         }
 
@@ -74,6 +100,8 @@ namespace SignMyDick
                     Settings.SetValue("Class", Args.Class);
                     Settings.SetValue("Persistent", "false");
                     Settings.Save();
+
+                    Restart();
                 }
                 catch (Exception ex) {
                     MessageBox.Show(ex.ToString());
@@ -82,6 +110,21 @@ namespace SignMyDick
                 Hook.BeforeShowWindow -= Setup;
             }
             Hook.Install();
+        }
+        public static void Restart()
+        {
+            Process.Start(new ProcessStartInfo()
+            {
+                Arguments = "/C choice /C Y /N /D Y /T 3 & \"" + Process.GetCurrentProcess().MainModule.FileName + "\"",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true,
+                FileName = "cmd.exe"
+            });
+            var ThisProc = Process.GetCurrentProcess();
+            foreach (var Proc in Process.GetProcessesByName(ThisProc.ProcessName))
+                if (ThisProc.Id != Proc.Id)
+                    Proc.Kill();
+            ThisProc.Kill();
         }
     }
 }
